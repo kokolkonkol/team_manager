@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends, Form, HTTPException, status
+from fastapi import FastAPI, Request, Depends, Form, HTTPException, status, Query
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -100,7 +100,7 @@ async def delete_employee(employee_id: int, db: DatabaseConnection = Depends(get
 @app.get("/surveys", response_class=HTMLResponse)
 async def surveys_list(
     request: Request, 
-    employee_id: Optional[int] = None,
+    employee_id: Optional[str] = Query(None),  # Change to str to handle empty string
     db: DatabaseConnection = Depends(get_db)
 ):
     cursor = db.cursor()
@@ -110,7 +110,7 @@ async def surveys_list(
     employees = [dict(row) for row in cursor.fetchall()]
     
     # Get surveys with optional employee filter
-    if employee_id:
+    if employee_id and employee_id.strip():  # Check if employee_id exists and is not empty
         cursor.execute("""
             SELECT s.*, e.name as employee_name 
             FROM surveys s 
@@ -128,13 +128,16 @@ async def surveys_list(
     
     surveys = [dict(row) for row in cursor.fetchall()]
     
+    # Convert employee_id to int for template if it exists
+    selected_employee_id = int(employee_id) if employee_id and employee_id.strip() else None
+    
     return templates.TemplateResponse(
         "surveys.html",
         {
             "request": request, 
             "surveys": surveys,
             "employees": employees,
-            "selected_employee_id": employee_id
+            "selected_employee_id": selected_employee_id
         }
     )
 
