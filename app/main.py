@@ -186,3 +186,15 @@ async def create_survey(
     except Exception as e:
         logger.error(f"Error creating survey: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/survey/{survey_id}/delete")
+async def delete_survey(survey_id: int, db: DatabaseConnection = Depends(get_db)):
+    """Delete survey"""
+    try:
+        cursor = db.cursor()
+        cursor.execute("DELETE FROM surveys WHERE id = ?", (survey_id,))
+        db.commit()
+        return RedirectResponse("/surveys", status_code=303)
+    except Exception as e:
+        logger.error(f"Error deleting survey: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
