@@ -1,10 +1,12 @@
-from fastapi import FastAPI, Request, Depends, Form, HTTPException
+from fastapi import FastAPI, Request, Depends, Form, HTTPException, status
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from .crud import get_db, DatabaseConnection
 import logging
 import os
+import secrets
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -21,8 +23,47 @@ STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
+security = HTTPBasic()
+
+def verify_credentials(credentials: HTTPBasicCredentials = Depends(security), db: DatabaseConnection = Depends(get_db)) -> bool:
+    cursor = db.cursor()
+    cursor.execute(
+        "SELECT password FROM users WHERE username = ?", 
+        (credentials.username,)
+    )
+    user = cursor.fetchone()
+    
+    if user is None:
+        return False
+    
+    correct_password = user['password']
+    is_correct = secrets.compare_digest(
+        credentials.password.encode("utf8"),
+        correct_password.encode("utf8")
+    )
+    
+    return is_correct
+
+@app.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request):
+    return templates.TemplateResponse(
+        "login.html",
+        {"request": request}
+    )
+
 @app.get("/", response_class=HTMLResponse)
-async def root(request: Request, db: DatabaseConnection = Depends(get_db)):
+async def root(
+    request: Request,
+    credentials: HTTPBasicCredentials = Depends(security),
+    db: DatabaseConnection = Depends(get_db)
+):
+    if not verify_credentials(credentials, db):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    
     cursor = db.cursor()
     cursor.execute("SELECT id, name FROM employees")
     employees = [dict(row) for row in cursor.fetchall()]
@@ -103,41 +144,45 @@ async def survey_details(survey_id: int, request: Request, db: DatabaseConnectio
 async def create_survey(
     request: Request,
     db: DatabaseConnection = Depends(get_db),
-    manager_name: str = Form(...),
-    employee_id: int = Form(...),
-    week_date: str = Form(...),
-    avg_bill: str = Form(...),
-    target_reached: str = Form(...),
-    shelf_bar_sales: str = Form(...),
-    actions_done: str = Form(...),
-    development_goals: str = Form(...),
-    foreign_orders: str = Form(...),
-    new_products_sales: str = Form(...),
-    salary_costs: str = Form(None),  # Changed from costs_summary
-    losses_analysis: str = Form(None),  # Changed from losses_summary
-    promo_sales: str = Form(...),
-    team_status: str = Form(...),
-    weekly_meetings: str = Form(None),  # Changed from meetings_done
-    staffing_needs: str = Form(...),
-    delivery_integrators: str = Form(...),  # Changed from external_integrators
-    general_topics: str = Form(...)
+    manager_name: str = Form(None),
+    employee_id: int = Form(...),  # This should remain required as it's crucial for database relations
+    week_date: str = Form(None),
+    avg_bill: str = Form(None),
+    target_reached: str = Form(None),
+    shelf_bar_sales: str = Form(None),
+    actions_done: str = Form(None),
+    development_goals: str = Form(None),
+    foreign_orders: str = Form(None),
+    new_products_sales: str = Form(None),
+    salary_costs: str = Form(None),
+    losses_analysis: str = Form(None),
+    promo_sales: str = Form(None),
+    team_status: str = Form(None),
+    weekly_meetings: str = Form(None),
+    staffing_needs: str = Form(None),
+    delivery_integrators: str = Form(None),
+    general_topics: str = Form(None)
 ):
     """Create new survey"""
-    cursor = db.cursor()
-    cursor.execute("""
-        INSERT INTO surveys (
+    try:
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO surveys (
+                manager_name, employee_id, week_date, avg_bill, target_reached,
+                shelf_bar_sales, actions_done, development_goals, foreign_orders,
+                new_products_sales, costs_summary, losses_summary, promo_sales,
+                team_status, meetings_done, staffing_needs, external_integrators,
+                general_topics
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        """, (
             manager_name, employee_id, week_date, avg_bill, target_reached,
             shelf_bar_sales, actions_done, development_goals, foreign_orders,
-            new_products_sales, costs_summary, losses_summary, promo_sales,
-            team_status, meetings_done, staffing_needs, external_integrators,
+            new_products_sales, salary_costs, losses_analysis, promo_sales,
+            team_status, weekly_meetings, staffing_needs, delivery_integrators,
             general_topics
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-    """, (
-        manager_name, employee_id, week_date, avg_bill, target_reached,
-        shelf_bar_sales, actions_done, development_goals, foreign_orders,
-        new_products_sales, salary_costs, losses_analysis, promo_sales,
-        team_status, weekly_meetings, staffing_needs, delivery_integrators,
-        general_topics
-    ))
-    db.commit()
-    return RedirectResponse("/surveys", status_code=303)
+        ))
+        db.commit()
+        return RedirectResponse("/surveys", status_code=303)
+    except Exception as e:
+        logger.error(f"Error creating survey: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
