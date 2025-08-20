@@ -7,6 +7,7 @@ from .crud import get_db, DatabaseConnection
 import logging
 import os
 import secrets
+from typing import Optional
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -97,18 +98,44 @@ async def delete_employee(employee_id: int, db: DatabaseConnection = Depends(get
     return RedirectResponse("/employees", status_code=303)
 
 @app.get("/surveys", response_class=HTMLResponse)
-async def surveys_list(request: Request, db: DatabaseConnection = Depends(get_db)):
+async def surveys_list(
+    request: Request, 
+    employee_id: Optional[int] = None,
+    db: DatabaseConnection = Depends(get_db)
+):
     cursor = db.cursor()
-    cursor.execute("""
-        SELECT s.*, e.name as employee_name 
-        FROM surveys s 
-        LEFT JOIN employees e ON s.employee_id = e.id 
-        ORDER BY s.created_at DESC
-    """)
+    
+    # Get all employees for the dropdown
+    cursor.execute("SELECT id, name FROM employees ORDER BY name")
+    employees = [dict(row) for row in cursor.fetchall()]
+    
+    # Get surveys with optional employee filter
+    if employee_id:
+        cursor.execute("""
+            SELECT s.*, e.name as employee_name 
+            FROM surveys s 
+            LEFT JOIN employees e ON s.employee_id = e.id 
+            WHERE s.employee_id = ?
+            ORDER BY s.created_at DESC
+        """, (employee_id,))
+    else:
+        cursor.execute("""
+            SELECT s.*, e.name as employee_name 
+            FROM surveys s 
+            LEFT JOIN employees e ON s.employee_id = e.id 
+            ORDER BY s.created_at DESC
+        """)
+    
     surveys = [dict(row) for row in cursor.fetchall()]
+    
     return templates.TemplateResponse(
         "surveys.html",
-        {"request": request, "surveys": surveys}
+        {
+            "request": request, 
+            "surveys": surveys,
+            "employees": employees,
+            "selected_employee_id": employee_id
+        }
     )
 
 @app.get("/survey/{employee_id}", response_class=HTMLResponse)
