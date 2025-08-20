@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>1on1 Weekly Survey - {{ employee.name }}</title>
+    <link href="/static/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen font-['Inter']">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-900">Team Manager</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-xl font-semibold text-gray-900">1on1 Weekly Survey - {{ employee.name }}</h2>
+                <p class="mt-1 text-sm text-gray-500">Complete the weekly survey form for your team member</p>
+            </div>
+
+            <form action="/survey" method="POST" class="card-body space-y-6">
+                <input type="hidden" name="employee_id" value="{{ employee.id }}">
+                
+                <!-- Basic Info -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Manager Name</label>
+                        <input type="text" name="manager_name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Week Date</label>
+                        <input type="date" name="week_date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <!-- 1. Realizacja z poprzedniego tygodnia -->
+                <div class="border-t pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">1. Realizacja z poprzedniego tygodnia</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">a. Średni rachunek</label>
+                            <input type="text" name="avg_bill" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">b. Realizacja targetu</label>
+                            <input type="text" name="target_reached" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">c. Sprzedaż półka bar</label>
+                            <input type="text" name="shelf_bar_sales" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Działania doskonalące -->
+                <div class="border-t pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">2. Działania doskonalące</h3>
+                    <label class="block text-sm font-medium text-gray-700">Jak wygląda wykonanie działań doskonalących do realizacji targetów?</label>
+                    <textarea name="actions_done" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" 
+                              placeholder="np. szkolenie nowych pracowników, ustawienie plakatów półek itp."></textarea>
+                </div>
+
+                <!-- 3. Cele rozwojowe -->
+                <div class="border-t pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">3. Cele rozwojowe managera</h3>
+                    <label class="block text-sm font-medium text-gray-700">Postęp w wykonaniu celów rozwojowych managera</label>
+                    <textarea name="development_goals" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                              placeholder="Jaki idzie postęp wykonania nauki zadań, zleconych w danym tygodniu?"></textarea>
+                </div>
+
+                <!-- 4. Analiza sprzedaży nowości -->
+                <div class="border-t pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">4. Analiza sprzedaży nowości</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">a. Zamówienia z palarni zagranicznych</label>
+                            <textarea name="foreign_orders" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">b. Nowości na barze i ich sprzedaż</label>
+                            <textarea name="new_products_sales" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Wykonanie z poprzedniego tygodnia -->
+                <div class="border-t pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">5. Wykonanie z poprzedniego tygodnia</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">a. Koszty wynagrodzeń</label>
+                            <textarea name="salary_costs" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                      placeholder="Podsumowanie za poprzedni tydzień + plan na następny"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">b. Straty i analiza zamówień</label>
+                            <textarea name="losses_analysis" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Akcje komercyjne -->
+                <div class="border-t pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">6. Akcje komercyjne</h3>
+                    <label class="block text-sm font-medium text-gray-700">Podsumowanie sprzedaży i dostępności produktów promocyjnych</label>
+                    <textarea name="promo_sales" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                </div>
+
+                <!-- 7. Zarządzanie operacyjne -->
+                <div class="border-t pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">7. Zarządzanie operacyjne</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">a. Status zespołu</label>
+                            <textarea name="team_status" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                      placeholder="Czy kogoś potrzebują zatrudnić, jak na bieżąco idzie zarządzanie?"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">b. Spotkania tygodniowe</label>
+                            <textarea name="weekly_meetings" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">c. Potrzeby kadrowe</label>
+                            <textarea name="staffing_needs" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">d. Integratorzy zewnętrzni</label>
+                            <textarea name="delivery_integrators" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                      placeholder="Wolt/Embargo - analiza sprzedaży i zadań"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Tematy ogólne -->
+                <div class="border-t pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">8. Tematy ogólne</h3>
+                    <label class="block text-sm font-medium text-gray-700">Uwagi managera kawiarni</label>
+                    <textarea name="general_topics" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                              placeholder="np. co się nie zgadza w raporcie, czego nie można znaleźć, inne ważne kwestie"></textarea>
+                </div>
+
+                <!-- Przyciski -->
+                <div class="flex justify-between pt-6">
+                    <a href="/" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Powrót</a>
+                    <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+                        Zapisz ankietę
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!-- static/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Team Manager Dashboard</title>
+    <link href="/static/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen font-['Inter']">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-900">Team Manager</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/surveys" class="btn btn-secondary text-sm">View Surveys</a>
+                    <a href="/employees" class="btn btn-primary text-sm">Manage Employees</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Grid -->
+        <div class="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Quick Stats -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-2">Team Overview</h2>
+                <div class="text-3xl font-bold text-blue-600">{{ employees|length }}</div>
+                <div class="text-sm text-gray-500 mt-1">Total Employees</div>
+            </div>
+
+            <!-- Recent Surveys -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Surveys</h2>
+                <div class="space-y-3">
+                    {% for e in employees[:3] %}
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-gray-700">{{ e.name }}</span>
+                        <a href="/survey/{{e.id}}" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md">Add Survey</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+                <div class="space-y-3">
+                    <a href="/employees" class="inline-flex w-full items-center justify-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-md">Add Employee</a>
+                    <a href="/surveys" class="inline-flex w-full items-center justify-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-md">View All Surveys</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employee List -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">All Employees</h2>
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {% for e in employees %}
+                    <div class="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-gray-900">{{ e.name }}</span>
+                            <a href="/survey/{{e.id}}" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md">Add Survey</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

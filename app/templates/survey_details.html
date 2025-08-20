@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Survey Details - {{ survey.employee_name }}</title>
+    <link href="/static/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen font-['Inter']">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-900">Survey Details</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/surveys" class="btn btn-secondary">Back to Surveys</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header Card -->
+        <div class="card mb-6">
+            <div class="card-body">
+                <h2 class="text-2xl font-bold text-gray-900">{{ survey.employee_name }}</h2>
+                <div class="mt-2 grid grid-cols-2 gap-4 text-sm text-gray-500">
+                    <div>
+                        <span class="font-medium">Survey Date:</span> {{ survey.week_date }}
+                    </div>
+                    <div>
+                        <span class="font-medium">Manager:</span> {{ survey.manager_name }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Survey Sections -->
+        <div class="space-y-6">
+            <!-- Section 1: Realizacja -->
+            <div class="card">
+                <div class="card-header border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Realizacja z poprzedniego tygodnia</h3>
+                </div>
+                <div class="card-body">
+                    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Średni rachunek</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.avg_bill }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Realizacja targetu</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.target_reached }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Sprzedaż półka bar</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.shelf_bar_sales }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Section 2: Development -->
+            <div class="card">
+                <div class="card-header border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Rozwój i działania</h3>
+                </div>
+                <div class="card-body">
+                    <dl class="grid grid-cols-1 gap-6">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Działania doskonalące</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.actions_done }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Cele rozwojowe</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.development_goals }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Section 3: Sales Analysis -->
+            <div class="card">
+                <div class="card-header border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Analiza sprzedaży i koszty</h3>
+                </div>
+                <div class="card-body">
+                    <dl class="grid grid-cols-1 gap-6">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Zamówienia z palarni zagranicznych</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.foreign_orders }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Nowości na barze</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.new_products_sales }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Koszty i straty</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.losses_analysis }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Akcje promocyjne</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.promo_sales }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Section 4: Team Management -->
+            <div class="card">
+                <div class="card-header border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Zarządzanie zespołem</h3>
+                </div>
+                <div class="card-body">
+                    <dl class="grid grid-cols-1 gap-6">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Status zespołu</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.team_status }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Spotkania tygodniowe</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.weekly_meetings }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Potrzeby kadrowe</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.staffing_needs }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Integratorzy zewnętrzni</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ survey.delivery_integrators }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Section 5: General Notes -->
+            <div class="card">
+                <div class="card-header border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Uwagi ogólne</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-sm text-gray-900">{{ survey.general_topics }}</div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

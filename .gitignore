@@ -1,0 +1,28 @@
+# Create and edit .gitignore
+cat > .gitignore << EOL
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+flaskenv/
+
+# Database
+data/*.db
+backups/
+
+# Node modules
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+app.log
+
+# Docker
+.docker/
+EOL
